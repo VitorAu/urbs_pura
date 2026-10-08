@@ -1,0 +1,25 @@
+import 'dart:io';
+
+import 'package:api/config/environment.dart';
+import 'package:api/handlers/health.dart';
+import 'package:postgres/postgres.dart';
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart';
+import 'package:shelf_router/shelf_router.dart';
+
+class Server {
+  final Connection _m_connection;
+  final Router _m_router = Router();
+
+  Server(Connection connection): _m_connection = connection;
+
+  Future<void> Start() async {
+    final ip = InternetAddress.anyIPv4;
+
+    this._m_router.mount("/api/v1/health", HealthHandler(this._m_connection).router);
+    final handler = Pipeline().addHandler(this._m_router.call);
+
+    final port = int.parse(Environment.ServerPort);
+    await serve(handler, ip, port);
+  }
+}

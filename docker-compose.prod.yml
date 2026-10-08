@@ -1,0 +1,6 @@
+services:
+  api:
+    build:
+      target: production
+    ports:
+      - ${SERVER_PORT}:8080

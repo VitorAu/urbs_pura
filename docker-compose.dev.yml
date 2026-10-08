@@ -1,0 +1,21 @@
+services:
+  db:
+    ports:
+      - ${DATABASE_PORT}:5432
+  api:
+    build: 
+      target: development
+    env_file:
+      - .env.dev
+    ports:
+      - ${SERVER_PORT}:8080
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./api/lib
+          target: /app/lib
+        - action: sync+restart
+          path: ./api/bin
+          target: /app/bin
+        - action: rebuild
+          path: ./api/pubspec.yaml
