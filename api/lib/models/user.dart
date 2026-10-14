@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:postgres/postgres.dart';
+
 enum RoleEnum { ADMIN, AUTHORITY, USER }
 
 class UserModel {
@@ -45,10 +49,12 @@ class UserModel {
       m_name = row["name"] as String,
       m_birthDate = row["birth_date"] as DateTime,
       m_password = row["password"] as String,
-      m_role = RoleEnum.values.byName(row["role"] as String),
+      m_role = RoleEnum.values.byName(
+        utf8.decode((row["role"] as UndecodedBytes).bytes),
+      ),
       m_createdAt = row["created_at"] as DateTime,
       m_updatedAt = row["updated_at"] as DateTime,
-      m_deletedAt = row["deleted_at"] as DateTime;
+      m_deletedAt = row["deleted_at"] as DateTime?;
 
   Map<String, dynamic> UserResponse() {
     final response = {

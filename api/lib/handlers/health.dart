@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:api/repositories/health.dart';
-import 'package:api/responses/error.dart';
-import 'package:api/responses/success.dart';
+import 'package:api/handlers/responses/error.dart';
+import 'package:api/handlers/responses/success.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -12,15 +14,16 @@ class HealthHandler {
 
   Router get router {
     final router = Router();
-    router.get('/api', _GetApiHealth);
-    router.get('/db', _GetDatabaseHealth);
+    router.get('/api', this._GetApiHealth);
+    router.get('/db', this._GetDatabaseHealth);
     return router;
   }
 
   Future<Response> _GetApiHealth(Request request) async {
     try {
-      final response = Response.ok(
-        SuccessResponse.ResponseNoData(message: "API is healthy"),
+      final response = Response(
+        200,
+        body: jsonEncode(SuccessResponse.ResponseNoData(message: "API is healthy")),
         headers: {'content-type': 'application/json'},
       );
       return response;

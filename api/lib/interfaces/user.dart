@@ -9,8 +9,13 @@ abstract class UserInterface {
     required DateTime birthDate,
     required String password,
   });
+  Future<String> CreateRefreshToken({
+    required String id,
+    required String email
+  });
   Future<UserModel> GetUserById({required String id});
   Future<UserModel> GetUserByEmail({required String email});
+  Future<UserModel> GetUserByRefreshToken({required String token});
   Future<UserModel> UpdateUser({
     required String id,
     String? email,
@@ -29,4 +34,5 @@ abstract class UserInterface {
     required String password,
   });
   Future<UserModel> DeleteUser({required String id});
+  Future<void> DeleteRefreshToken({required String token});
 }

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   name VARCHAR(255) NOT NULL,
   birth_date DATE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  role role_enum NOT NULL, -- DEFAULT 'USER',
+  role role_enum NOT NULL DEFAULT 'USER',
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   updated_at TIMESTAMP DEFAULT now() NOT NULL,
   deleted_at TIMESTAMP
