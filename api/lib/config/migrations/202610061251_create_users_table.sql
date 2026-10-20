@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS users (
   phone VARCHAR(16) UNIQUE NOT NULL,
   username VARCHAR(255) UNIQUE NOT NULL,
   name VARCHAR(255) NOT NULL,
-  birth_date DATE NOT NULL,
   password VARCHAR(255) NOT NULL,
   role role_enum NOT NULL DEFAULT 'USER',
   created_at TIMESTAMP DEFAULT now() NOT NULL,

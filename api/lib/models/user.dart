@@ -10,7 +10,6 @@ class UserModel {
   final String m_phone;
   final String m_username;
   final String m_name;
-  final DateTime m_birthDate;
   final String m_password;
   final RoleEnum m_role;
   final DateTime m_createdAt;
@@ -23,7 +22,6 @@ class UserModel {
     required String phone,
     required String username,
     required String name,
-    required DateTime birthDate,
     required String password,
     required RoleEnum role,
     required DateTime createdAt,
@@ -34,7 +32,6 @@ class UserModel {
        m_phone = phone,
        m_username = username,
        m_name = name,
-       m_birthDate = birthDate,
        m_password = password,
        m_role = role,
        m_createdAt = createdAt,
@@ -47,7 +44,6 @@ class UserModel {
       m_phone = row["phone"] as String,
       m_username = row["username"] as String,
       m_name = row["name"] as String,
-      m_birthDate = row["birth_date"] as DateTime,
       m_password = row["password"] as String,
       m_role = RoleEnum.values.byName(
         utf8.decode((row["role"] as UndecodedBytes).bytes),
@@ -63,7 +59,6 @@ class UserModel {
       "phone": this.m_phone,
       "username": this.m_username,
       "name": this.m_name,
-      "birth_date": this.m_birthDate.toIso8601String(),
       "role": this.m_role.name,
       "createdAt": this.m_createdAt.toIso8601String(),
       "updatedAt": this.m_updatedAt.toIso8601String(),

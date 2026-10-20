@@ -6,7 +6,6 @@ abstract class UserInterface {
     required String phone,
     required String username,
     required String name,
-    required DateTime birthDate,
     required String password,
   });
   Future<String> CreateRefreshToken({
@@ -22,7 +21,6 @@ abstract class UserInterface {
     String? phone,
     String? username,
     String? name,
-    DateTime? birthDate,
   });
   Future<UserModel> UpdateUserPassword({
     required String id,

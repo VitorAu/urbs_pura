@@ -14,8 +14,10 @@ class HealthHandler {
 
   Router get router {
     final router = Router();
+
     router.get('/api', this._GetApiHealth);
     router.get('/db', this._GetDatabaseHealth);
+    
     return router;
   }
 

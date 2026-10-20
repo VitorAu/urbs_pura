@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:api/config/environment.dart';
 import 'package:api/handlers/auth.dart';
 import 'package:api/handlers/health.dart';
+import 'package:api/handlers/user.dart';
+import 'package:api/middleware/auth.dart';
 import 'package:api/repositories/health.dart';
 import 'package:api/repositories/user.dart';
 import 'package:api/services/auth.dart';
@@ -27,6 +29,11 @@ class Server {
 
     this._m_router.mount("/api/v1/health", HealthHandler(healthRepository).router);
     this._m_router.mount("/api/v1/auth", AuthHandler(userRepository, authService).router);
+    this._m_router.mount('/api/v1/user', 
+     Pipeline()
+      .addMiddleware(AuthMiddleware.Auth(authService))
+      .addHandler(UserHandler(userRepository).router.call),
+    );
 
     final handler = Pipeline().addHandler(this._m_router.call);
 

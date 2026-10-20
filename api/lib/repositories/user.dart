@@ -21,7 +21,6 @@ class UserRepository extends UserInterface {
     required String phone,
     required String username,
     required String name,
-    required DateTime birthDate,
     required String password,
   }) async {
     final connection = await this._m_connection;
@@ -33,7 +32,6 @@ class UserRepository extends UserInterface {
           phone,
           username,
           name,
-          birth_date,
           password
         )
         VALUES (
@@ -41,7 +39,6 @@ class UserRepository extends UserInterface {
           @phone,
           @username,
           @name,
-          @birth_date,
           @password
         )
         RETURNING *
@@ -51,7 +48,6 @@ class UserRepository extends UserInterface {
         'phone': phone,
         'username': username,
         'name': name,
-        'birth_date': birthDate,
         'password': hashedPassword,
       },
     );
@@ -167,7 +163,6 @@ class UserRepository extends UserInterface {
     String? phone,
     String? username,
     String? name,
-    DateTime? birthDate,
   }) async {
     final connection = await this._m_connection;
     final data = await connection.execute(
@@ -178,7 +173,6 @@ class UserRepository extends UserInterface {
         phone = COALESCE(@phone, phone),
         username = COALESCE(@username, username),
         name = COALESCE(@name, name),
-        birth_date = COALESCE(@birth_date, birth_date),
         updated_at = CURRENT_TIMESTAMP
         WHERE id = @id
         AND deleted_at IS NULL
@@ -190,7 +184,6 @@ class UserRepository extends UserInterface {
         'phone': phone,
         'username': username,
         'name': name,
-        'birth_date': birthDate,
       },
     );
 

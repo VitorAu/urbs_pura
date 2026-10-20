@@ -1,7 +1,7 @@
 services:
   db:
-    image: postgis/postgis
-    platform: linux/amd64
+    # image: postgis/postgis:18-3.6-alpine
+    image: imresamu/postgis:18-3.6-alpine3.23
     container_name: urbs_pura_database
     restart: always
     shm_size: 1GB

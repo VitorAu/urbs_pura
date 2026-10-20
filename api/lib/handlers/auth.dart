@@ -17,10 +17,12 @@ class AuthHandler {
 
   Router get router {
     final router = Router();
+
     router.post('/register', this._Register);
     router.post('/login', this._Login);
     router.post('/logout', this._Logout);
     router.post('/refresh', this._Refresh);
+
     return router;
   }
 
@@ -33,14 +35,12 @@ class AuthHandler {
       final phone = data['phone'] as String;
       final username = data['username'] as String;
       final name = data['name'] as String;
-      final birthDate = DateTime.parse(data['birthDate'] as String);
       final password = data['password'] as String;
       final createUserResponse = await this._m_userRepository.CreateUser(
         email: email,
         phone: phone,
         username: username,
         name: name,
-        birthDate: birthDate,
         password: password,
       );
 
