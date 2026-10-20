@@ -10,6 +10,8 @@ class Environment {
   static final _m_databaseUrl = Platform.environment["DATABASE_URL"];
   static final _m_serverPort = Platform.environment["SERVER_PORT"];
   static final _m_serverJwtSecret = Platform.environment["SERVER_JWT_SECRET"];
+  static final _m_serverJwtAccessTokenExpiration = Platform.environment["SERVER_JWT_ACCESS_TOKEN_EXPIRATION"];
+  static final _m_serverJwtRefreshTokenExpiration = Platform.environment["SERVER_JWT_REFRESH_TOKEN_EXPIRATION"];
 
   static String get DartEnv => _m_dartEnv ?? "development";
   static String get DatabasePort => _m_databasePort ?? "5432";
@@ -20,4 +22,6 @@ class Environment {
   static String get DatabaseUrl => _m_databaseUrl ?? "";
   static String get ServerPort => _m_serverPort ?? "8080";
   static String get ServerJwtSecret => _m_serverJwtSecret ?? "";
+  static String get ServerJwtAccessTokenExpiration => _m_serverJwtAccessTokenExpiration ?? "";
+  static String get ServerJwtRefreshTokenExpiration => _m_serverJwtRefreshTokenExpiration ?? "";
 }
