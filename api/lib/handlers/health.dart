@@ -17,7 +17,7 @@ class HealthHandler {
 
     router.get('/api', this._GetApiHealth);
     router.get('/db', this._GetDatabaseHealth);
-    
+
     return router;
   }
 
@@ -25,7 +25,7 @@ class HealthHandler {
     try {
       final response = Response(
         200,
-        body: jsonEncode(SuccessResponse.ResponseNoData(message: "API is healthy")),
+        body: SuccessResponse.ResponseNoData(message: "API is healthy"),
         headers: {'content-type': 'application/json'},
       );
       return response;
@@ -35,6 +35,7 @@ class HealthHandler {
           message: "API is not healthy",
           error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }

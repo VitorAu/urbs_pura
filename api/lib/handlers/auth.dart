@@ -46,11 +46,9 @@ class AuthHandler {
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.Response(
-            message: "User created successfully",
-            data: createUserResponse.UserResponse(),
-          ),
+        body: SuccessResponse.Response(
+          message: "User created successfully",
+          data: createUserResponse.UserResponse(),
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -58,12 +56,11 @@ class AuthHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to create user",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to create user",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
@@ -83,12 +80,11 @@ class AuthHandler {
           .VerifyUserPassword(id: getUserByEmailData.m_id, password: password);
       if (!verifyUserPasswordData) {
         final response = Response.internalServerError(
-          body: jsonEncode(
-            ErrorResponse.Response(
-              message: "Failed to login into user",
-              error: "Incorrect credentials",
-            ),
+          body: ErrorResponse.Response(
+            message: "Failed to login into user",
+            error: "Incorrect credentials",
           ),
+          headers: {'content-type': 'application/json'},
         );
         return response;
       }
@@ -103,15 +99,13 @@ class AuthHandler {
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.Response(
-            message: "User created successfully",
-            data: {
-              'user': getUserByEmailData.UserResponse(),
-              'accessToken': accessToken,
-              'refreshToken': refreshToken,
-            },
-          ),
+        body: SuccessResponse.Response(
+          message: "User created successfully",
+          data: {
+            'user': getUserByEmailData.UserResponse(),
+            'accessToken': accessToken,
+            'refreshToken': refreshToken,
+          },
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -119,12 +113,11 @@ class AuthHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to login into user",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to login into user",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
@@ -140,10 +133,8 @@ class AuthHandler {
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.ResponseNoData(
-            message: "User loged out successfully",
-          ),
+        body: SuccessResponse.ResponseNoData(
+          message: "User loged out successfully",
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -151,12 +142,11 @@ class AuthHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to logout user",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to logout user",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
@@ -177,14 +167,12 @@ class AuthHandler {
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.Response(
-            message: "Access token refreshed",
-            data: {
-              'user': getUserByRefreshTokenData.UserResponse(),
-              'accessToken': accessToken,
-            },
-          ),
+        body: SuccessResponse.Response(
+          message: "Access token refreshed",
+          data: {
+            'user': getUserByRefreshTokenData.UserResponse(),
+            'accessToken': accessToken,
+          },
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -192,12 +180,11 @@ class AuthHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to refresh access token",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to refresh access token",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }

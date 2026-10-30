@@ -33,11 +33,9 @@ class UserHandler {
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.Response(
-            message: "User found successfully",
-            data: getUserByIdResponse.UserResponse(),
-          ),
+        body: SuccessResponse.Response(
+          message: "User found successfully",
+          data: getUserByIdResponse.UserResponse(),
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -45,31 +43,27 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to find user",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to find user",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
   }
 
-   Future<Response> _GetUserByEmail(Request request) async {
+  Future<Response> _GetUserByEmail(Request request) async {
     try {
       final email = request.params['email']!;
-      final getUserByEmailResponse = await this._m_userRepository.GetUserByEmail(
-        email: email,
-      );
+      final getUserByEmailResponse = await this._m_userRepository
+          .GetUserByEmail(email: email);
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.Response(
-            message: "User found successfully",
-            data: getUserByEmailResponse.UserResponse(),
-          ),
+        body: SuccessResponse.Response(
+          message: "User found successfully",
+          data: getUserByEmailResponse.UserResponse(),
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -77,17 +71,16 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to find user",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to find user",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
   }
-  
+
   Future<Response> _UpdateUser(Request request) async {
     try {
       final data =
@@ -108,11 +101,9 @@ class UserHandler {
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.Response(
-            message: "User updated successfully",
-            data: updateUserResponse.UserResponse(),
-          ),
+        body: SuccessResponse.Response(
+          message: "User updated successfully",
+          data: updateUserResponse.UserResponse(),
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -120,17 +111,16 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to update user",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to update user",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
   }
-  
+
   Future<Response> _UpdateUserPassword(Request request) async {
     try {
       final data =
@@ -139,19 +129,18 @@ class UserHandler {
       final id = request.params['id']!;
       final password = data['password'] as String;
       final newPassword = data['newPassword'] as String;
-      final updateUserPasswordResponse = await this._m_userRepository.UpdateUserPassword(
-        id: id,
-        password: password,
-        newPassword: newPassword
-      );
+      final updateUserPasswordResponse = await this._m_userRepository
+          .UpdateUserPassword(
+            id: id,
+            password: password,
+            newPassword: newPassword,
+          );
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.Response(
-            message: "User password updated successfully",
-            data: updateUserPasswordResponse.UserResponse(),
-          ),
+        body: SuccessResponse.Response(
+          message: "User password updated successfully",
+          data: updateUserPasswordResponse.UserResponse(),
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -159,31 +148,26 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to update user password",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to update user password",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
   }
-  
+
   Future<Response> _Delete(Request request) async {
     try {
       final id = request.params['id']!;
-      final deleteResponse = await this._m_userRepository.DeleteUser(
-        id: id,
-      );
+      final deleteResponse = await this._m_userRepository.DeleteUser(id: id);
 
       final response = Response(
         200,
-        body: jsonEncode(
-          SuccessResponse.Response(
-            message: "User deleted successfully",
-            data: deleteResponse.UserResponse(),
-          ),
+        body: SuccessResponse.Response(
+          message: "User deleted successfully",
+          data: deleteResponse.UserResponse(),
         ),
         headers: {'content-type': 'application/json'},
       );
@@ -191,12 +175,11 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: jsonEncode(
-          ErrorResponse.Response(
-            message: "Failed to delete user",
-            error: err.toString(),
-          ),
+        body: ErrorResponse.Response(
+          message: "Failed to delete user",
+          error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
