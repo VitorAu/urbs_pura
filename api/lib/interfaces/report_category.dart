@@ -3,7 +3,7 @@ import 'package:api/models/report_category.dart';
 abstract class ReportCategoryInterface {
   Future<ReportCategoryModel> CreateReportCategory({
     required String title,
-    required String description,
+    String? description,
   });
   Future<List<ReportCategoryModel>> GetReportCategories();
   Future<ReportCategoryModel> GetReportCategoryById({required String id});

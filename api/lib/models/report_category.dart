@@ -5,7 +5,7 @@ import 'package:postgres/postgres.dart';
 class ReportCategoryModel {
   final String m_id;
   final String m_title;
-  final String m_description;
+  final String? m_description;
   final DateTime m_createdAt;
   final DateTime m_updatedAt;
   final DateTime? m_deletedAt;
@@ -13,24 +13,24 @@ class ReportCategoryModel {
   ReportCategoryModel({
     required String id,
     required String title,
-    required String description,
+    String? description,
     required DateTime createdAt,
     required DateTime updatedAt,
     DateTime? deletedAt,
-  }) : m_id = id,
-       m_title = title,
-       m_description = description,
-       m_createdAt = createdAt,
-       m_updatedAt = updatedAt,
-       m_deletedAt = deletedAt;
-  
+  }) : this.m_id = id,
+       this.m_title = title,
+       this.m_description = description,
+       this.m_createdAt = createdAt,
+       this.m_updatedAt = updatedAt,
+       this.m_deletedAt = deletedAt;
+
   ReportCategoryModel.FromDatabase(Map<String, dynamic> row)
-    : m_id = row["id"] as String,
-      m_title = row["title"] as String,
-      m_description = row["description"] as String,
-      m_createdAt = row["created_at"] as DateTime,
-      m_updatedAt = row["updated_at"] as DateTime,
-      m_deletedAt = row["deleted_at"] as DateTime?;
+    : this.m_id = row["id"] as String,
+      this.m_title = row["title"] as String,
+      this.m_description = row["description"] as String?,
+      this.m_createdAt = row["created_at"] as DateTime,
+      this.m_updatedAt = row["updated_at"] as DateTime,
+      this.m_deletedAt = row["deleted_at"] as DateTime?;
 
   Map<String, dynamic> ReportCategoryResponse() {
     final response = {

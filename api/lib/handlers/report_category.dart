@@ -29,7 +29,7 @@ class ReportCategoryHandler {
           jsonDecode(await request.readAsString()) as Map<String, dynamic>;
 
       final title = data['title'] as String;
-      final description = data['description'] as String;
+      final description = data['description'] as String?;
       final createReportCategoryResponse = await this
           ._m_reportCategoryRepository
           .CreateReportCategory(title: title, description: description);

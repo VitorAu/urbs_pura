@@ -11,7 +11,7 @@ class ReportCategoryRepository extends ReportCategoryInterface {
   @override
   Future<ReportCategoryModel> CreateReportCategory({
     required String title,
-    required String description,
+    String? description,
   }) async {
     final connection = await this._m_connection;
     final data = await connection.execute(
@@ -71,7 +71,9 @@ class ReportCategoryRepository extends ReportCategoryInterface {
   }
 
   @override
-  Future<ReportCategoryModel> GetReportCategoryByTitle({required String title}) async {
+  Future<ReportCategoryModel> GetReportCategoryByTitle({
+    required String title,
+  }) async {
     final connection = await this._m_connection;
     final data = await connection.execute(
       Sql.named('''
@@ -89,7 +91,11 @@ class ReportCategoryRepository extends ReportCategoryInterface {
   }
 
   @override
-  Future<ReportCategoryModel> UpdateReportCategory({required String id, String? title, String? description}) {
+  Future<ReportCategoryModel> UpdateReportCategory({
+    required String id,
+    String? title,
+    String? description,
+  }) {
     // TODO: implement UpdateReportCategory
     throw UnimplementedError();
   }
