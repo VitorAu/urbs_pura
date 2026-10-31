@@ -15,13 +15,43 @@ class UserHandler {
   Router get router {
     final router = Router();
 
-    router.get('/<id>', this._GetUserById);
+    router.get('/', this._GetAuthenticatedUser);
+    router.get('/id/<id>', this._GetUserById);
     router.get('/email/<email>', this._GetUserByEmail);
-    router.patch('/<id>', this._UpdateUser);
-    router.patch('/<id>/password', this._UpdateUserPassword);
-    router.delete('/<id>', this._Delete);
+    router.patch('/', this._UpdateUser);
+    router.patch('/password', this._UpdateUserPassword);
+    router.delete('/', this._Delete);
 
     return router;
+  }
+
+  Future<Response> _GetAuthenticatedUser(Request request) async {
+    try {
+      final id = request.context['userId'] as String;
+      final getUserByIdResponse = await this._m_userRepository.GetUserById(
+        id: id,
+      );
+
+      final response = Response(
+        200,
+        body: SuccessResponse.Response(
+          message: "User found successfully",
+          data: getUserByIdResponse.UserResponse(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+
+      return response;
+    } catch (err) {
+      final response = Response.internalServerError(
+        body: ErrorResponse.Response(
+          message: "Failed to find user",
+          error: err.toString(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+      return response;
+    }
   }
 
   Future<Response> _GetUserById(Request request) async {
@@ -86,7 +116,7 @@ class UserHandler {
       final data =
           jsonDecode(await request.readAsString()) as Map<String, dynamic>;
 
-      final id = request.params['id']!;
+      final id = request.context['userId'] as String;
       final email = data['email'] as String?;
       final phone = data['phone'] as String?;
       final username = data['username'] as String?;
@@ -126,7 +156,7 @@ class UserHandler {
       final data =
           jsonDecode(await request.readAsString()) as Map<String, dynamic>;
 
-      final id = request.params['id']!;
+      final id = request.context['userId'] as String;
       final password = data['password'] as String;
       final newPassword = data['newPassword'] as String;
       final updateUserPasswordResponse = await this._m_userRepository
@@ -160,7 +190,7 @@ class UserHandler {
 
   Future<Response> _Delete(Request request) async {
     try {
-      final id = request.params['id']!;
+      final id = request.context['userId'] as String;
       final deleteResponse = await this._m_userRepository.DeleteUser(id: id);
 
       final response = Response(
