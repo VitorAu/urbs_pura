@@ -12,13 +12,13 @@ class ReportModel {
   final String m_reportCategoryId;
   final String? m_description;
   final ReportEnum m_status;
-  final String m_street;
-  final String m_number;
+  final String? m_street;
+  final String? m_number;
   final String? m_complement;
-  final String m_neighborhood;
-  final String m_city;
-  final String m_state;
-  final String m_postalCode;
+  final String? m_neighborhood;
+  final String? m_city;
+  final String? m_state;
+  final String? m_postalCode;
   final CoordinatesType m_coordinates;
   final DateTime m_createdAt;
   final DateTime m_updatedAt;
@@ -30,13 +30,13 @@ class ReportModel {
     required String reportCategoryId,
     String? description,
     required ReportEnum status,
-    required String street,
-    required String number,
+    String? street,
+    String? number,
     String? complement,
-    required String neighborhood,
-    required String city,
-    required String state,
-    required String postalCode,
+    String? neighborhood,
+    String? city,
+    String? state,
+    String? postalCode,
     required CoordinatesType coordinates,
     required DateTime createdAt,
     required DateTime updatedAt,
@@ -66,13 +66,13 @@ class ReportModel {
       this.m_status = ReportEnum.values.byName(
         utf8.decode((row['status'] as UndecodedBytes).bytes),
       ),
-      this.m_street = row['street'] as String,
-      this.m_number = row['number'] as String,
+      this.m_street = row['street'] as String?,
+      this.m_number = row['number'] as String?,
       this.m_complement = row['complement'] as String?,
-      this.m_neighborhood = row['neighborhood'] as String,
-      this.m_city = row['city'] as String,
-      this.m_state = row['state'] as String,
-      this.m_postalCode = row['postal_code'] as String,
+      this.m_neighborhood = row['neighborhood'] as String?,
+      this.m_city = row['city'] as String?,
+      this.m_state = row['state'] as String?,
+      this.m_postalCode = row['postal_code'] as String?,
       this.m_coordinates = (
         longitude: row['longitude'] as double,
         latitude: row['latitude'] as double,

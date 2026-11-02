@@ -12,13 +12,13 @@ class ReportRepository extends ReportInterface {
     required String userId,
     required String reportCategoryId,
     String? description,
-    required String street,
-    required String number,
+    String? street,
+    String? number,
     String? complement,
-    required String neighborhood,
-    required String city,
-    required String state,
-    required String postalCode,
+    String? neighborhood,
+    String? city,
+    String? state,
+    String? postalCode,
     required CoordinatesType coordinates,
   }) async {
     final connection = await this._m_connection;
@@ -54,7 +54,9 @@ class ReportRepository extends ReportInterface {
           4326
         )::geography
       )
-      RETURNING *
+      RETURNING *,
+      ST_X(coordinates::geometry) AS longitude,
+      ST_Y(coordinates::geometry) AS latitude
     '''),
       parameters: {
         'userId': userId,
@@ -82,7 +84,10 @@ class ReportRepository extends ReportInterface {
     final connection = await this._m_connection;
     final data = await connection.execute(
       Sql.named('''
-        SELECT * FROM reports
+        SELECT *,
+        ST_X(coordinates::geometry) AS longitude,
+        ST_Y(coordinates::geometry) AS latitude
+        FROM reports
         WHERE deleted_at IS NULL
       '''),
     );
@@ -98,7 +103,10 @@ class ReportRepository extends ReportInterface {
     final connection = await this._m_connection;
     final data = await connection.execute(
       Sql.named('''
-        SELECT * FROM reports
+        SELECT *,
+        ST_X(coordinates::geometry) AS longitude,
+        ST_Y(coordinates::geometry) AS latitude
+        FROM reports
         WHERE id = @id
         AND deleted_at IS NULL
         LIMIT 1
@@ -116,15 +124,16 @@ class ReportRepository extends ReportInterface {
     final connection = await this._m_connection;
     final data = await connection.execute(
       Sql.named('''
-        SELECT * FROM reports
+        SELECT *,
+        ST_X(coordinates::geometry) AS longitude,
+        ST_Y(coordinates::geometry) AS latitude
+        FROM reports
         WHERE user_id = @user_id
         AND deleted_at IS NULL
-        LIMIT 1
       '''),
       parameters: {'user_id': userId},
     );
 
-    if (data.isEmpty) throw new Exception("Failed to find report");
     final response = data
         .map((aux) => ReportModel.FromDatabase(aux.toColumnMap()))
         .toList();
@@ -138,15 +147,16 @@ class ReportRepository extends ReportInterface {
     final connection = await this._m_connection;
     final data = await connection.execute(
       Sql.named('''
-        SELECT * FROM reports
+        SELECT *,
+        ST_X(coordinates::geometry) AS longitude,
+        ST_Y(coordinates::geometry) AS latitude
+        FROM reports
         WHERE report_category_id = @report_category_id
         AND deleted_at IS NULL
-        LIMIT 1
       '''),
       parameters: {'report_category_id': reportCategoryId},
     );
 
-    if (data.isEmpty) throw new Exception("Failed to find report");
     final response = data
         .map((aux) => ReportModel.FromDatabase(aux.toColumnMap()))
         .toList();
@@ -159,13 +169,52 @@ class ReportRepository extends ReportInterface {
     required String userId,
     String? description,
   }) async {
-    // TODO: implement DeleteReport
-    throw UnimplementedError();
+    final connection = await this._m_connection;
+    final data = await connection.execute(
+      Sql.named('''
+        UPDATE reports
+        SET
+        description = @description,
+        updated_at = CURRENT_TIMESTAMP
+        WHERE id = @id
+        AND user_id = @user_id
+        AND deleted_at IS NULL
+        RETURNING *,
+        ST_X(coordinates::geometry) AS longitude,
+        ST_Y(coordinates::geometry) AS latitude
+      '''),
+      parameters: {'id': id, 'user_id': userId, 'description': description},
+    );
+
+    if (data.isEmpty) throw new Exception("Failed to update report");
+    final response = ReportModel.FromDatabase(data.first.toColumnMap());
+    return response;
   }
 
   @override
-  Future<void> DeleteReport({required String id, required String userId}) {
-    // TODO: implement DeleteReport
-    throw UnimplementedError();
+  Future<ReportModel> DeleteReport({
+    required String id,
+    required String userId,
+  }) async {
+    final connection = await this._m_connection;
+    final data = await connection.execute(
+      Sql.named('''
+        UPDATE reports
+        SET
+        updated_at = CURRENT_TIMESTAMP,
+        deleted_at = CURRENT_TIMESTAMP
+        WHERE id = @id
+        AND user_id = @user_id
+        AND deleted_at IS NULL
+        RETURNING *,
+        ST_X(coordinates::geometry) AS longitude,
+        ST_Y(coordinates::geometry) AS latitude
+      '''),
+      parameters: {'id': id, 'user_id': userId},
+    );
+
+    if (data.isEmpty) throw new Exception("Failed to delete report");
+    final response = ReportModel.FromDatabase(data.first.toColumnMap());
+    return response;
   }
 }

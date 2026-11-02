@@ -19,6 +19,8 @@ class ReportCategoryHandler {
     router.get('/', this._GetReportCategories);
     router.get('/<id>', this._GetReportCategoryById);
     router.get('/title/<title>', this._GetReportCategoryByTitle);
+    // router.patch('/', this._UpdateReportCategory);
+    // router.delete('/', this._DeleteReportCategory);
 
     return router;
   }
