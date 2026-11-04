@@ -8,7 +8,7 @@ class HealthRepository {
     final connection = await this._m_connection;
     final response = await connection.execute('SELECT 1');
 
-    if(response.isEmpty) return false;
+    if (response.isEmpty) return false;
     return true;
   }
 }

@@ -1,4 +1,7 @@
 services:
+  s3_db:
+    ports:
+      - "8333:8333"
   db:
     ports:
       - ${DATABASE_PORT}:5432

@@ -135,25 +135,23 @@ class UserRepository extends UserInterface {
 
     final tokenHash = sha256.convert(utf8.encode(token)).toString();
     final tokenData = await connection.execute(
-        Sql.named('''
+      Sql.named('''
           SELECT user_id FROM refresh_tokens
           WHERE token = @token
           AND expires_at > CURRENT_TIMESTAMP
           AND deleted_at IS NULL
           LIMIT 1
         '''),
-        parameters: {
-          'token': tokenHash
-        }
-      );
+      parameters: {'token': tokenHash},
+    );
 
-      if(tokenData.isEmpty) {
-        throw Exception("Failed to find refresh token");
-      }
+    if (tokenData.isEmpty) {
+      throw Exception("Failed to find refresh token");
+    }
 
-      final id = tokenData.first.toColumnMap()['user_id'] as String;
-      final userData = await this.GetUserById(id: id);
-      return userData;
+    final id = tokenData.first.toColumnMap()['user_id'] as String;
+    final userData = await this.GetUserById(id: id);
+    return userData;
   }
 
   @override
@@ -287,9 +285,7 @@ class UserRepository extends UserInterface {
         WHERE token = @token
         AND deleted_at IS NULL
       '''),
-      parameters: {
-        'token': tokenHash
-      }
+      parameters: {'token': tokenHash},
     );
   }
 }

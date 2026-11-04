@@ -27,30 +27,30 @@ class UserModel {
     required DateTime createdAt,
     required DateTime updatedAt,
     DateTime? deletedAt,
-  }) : m_id = id,
-       m_email = email,
-       m_phone = phone,
-       m_username = username,
-       m_name = name,
-       m_password = password,
-       m_role = role,
-       m_createdAt = createdAt,
-       m_updatedAt = updatedAt,
-       m_deletedAt = deletedAt;
+  }) : this.m_id = id,
+       this.m_email = email,
+       this.m_phone = phone,
+       this.m_username = username,
+       this.m_name = name,
+       this.m_password = password,
+       this.m_role = role,
+       this.m_createdAt = createdAt,
+       this.m_updatedAt = updatedAt,
+       this.m_deletedAt = deletedAt;
 
   UserModel.FromDatabase(Map<String, dynamic> row)
-    : m_id = row["id"] as String,
-      m_email = row["email"] as String,
-      m_phone = row["phone"] as String,
-      m_username = row["username"] as String,
-      m_name = row["name"] as String,
-      m_password = row["password"] as String,
-      m_role = RoleEnum.values.byName(
+    : this.m_id = row["id"] as String,
+      this.m_email = row["email"] as String,
+      this.m_phone = row["phone"] as String,
+      this.m_username = row["username"] as String,
+      this.m_name = row["name"] as String,
+      this.m_password = row["password"] as String,
+      this.m_role = RoleEnum.values.byName(
         utf8.decode((row["role"] as UndecodedBytes).bytes),
       ),
-      m_createdAt = row["created_at"] as DateTime,
-      m_updatedAt = row["updated_at"] as DateTime,
-      m_deletedAt = row["deleted_at"] as DateTime?;
+      this.m_createdAt = row["created_at"] as DateTime,
+      this.m_updatedAt = row["updated_at"] as DateTime,
+      this.m_deletedAt = row["deleted_at"] as DateTime?;
 
   Map<String, dynamic> UserResponse() {
     final response = {
