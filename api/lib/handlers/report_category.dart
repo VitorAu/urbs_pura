@@ -60,7 +60,7 @@ class ReportCategoryHandler {
 
   Future<Response> _GetReportCategories(Request request) async {
     try {
-      final createReportCategoryResponse = await this
+      final getReportCategoryResponse = await this
           ._m_reportCategoryRepository
           .GetReportCategories();
 
@@ -68,7 +68,7 @@ class ReportCategoryHandler {
         200,
         body: SuccessResponse.Response(
           message: "Report categories found successfully",
-          data: createReportCategoryResponse
+          data: getReportCategoryResponse
               .map((aux) => aux.ReportCategoryResponse())
               .toList(),
         ),

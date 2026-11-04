@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:postgres/postgres.dart';
-
 class ReportCategoryModel {
   final String m_id;
   final String m_title;

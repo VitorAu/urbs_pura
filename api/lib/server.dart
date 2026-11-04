@@ -5,13 +5,16 @@ import 'package:api/handlers/auth.dart';
 import 'package:api/handlers/health.dart';
 import 'package:api/handlers/report.dart';
 import 'package:api/handlers/report_category.dart';
+import 'package:api/handlers/report_media.dart';
 import 'package:api/handlers/user.dart';
 import 'package:api/middleware/auth.dart';
 import 'package:api/repositories/health.dart';
 import 'package:api/repositories/report.dart';
 import 'package:api/repositories/report_category.dart';
+import 'package:api/repositories/report_media.dart';
 import 'package:api/repositories/user.dart';
 import 'package:api/services/auth.dart';
+import 'package:api/services/s3.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
@@ -27,6 +30,7 @@ class Server {
     final ip = InternetAddress.anyIPv4;
 
     final authService = AuthService();
+    final s3Service = S3Service();
 
     final healthRepository = HealthRepository(Future.value(this._m_connection));
     final userRepository = UserRepository(
@@ -37,6 +41,10 @@ class Server {
       Future.value(this._m_connection),
     );
     final reportRepository = ReportRepository(Future.value(this._m_connection));
+    final reportMediaRepository = ReportMediaRepository(
+      Future.value(this._m_connection),
+      s3Service,
+    );
 
     this._m_router.mount(
       "/api/v1/health",
@@ -65,6 +73,12 @@ class Server {
       Pipeline()
           .addMiddleware(AuthMiddleware.Auth(authService))
           .addHandler(ReportHandler(reportRepository).router.call),
+    );
+    this._m_router.mount(
+      '/api/v1/report_media',
+      Pipeline()
+          .addMiddleware(AuthMiddleware.Auth(authService))
+          .addHandler(ReportMediaHandler(reportMediaRepository).router.call),
     );
 
     final handler = Pipeline().addHandler(this._m_router.call);

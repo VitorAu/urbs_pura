@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:api/repositories/health.dart';
 import 'package:api/handlers/responses/error.dart';
 import 'package:api/handlers/responses/success.dart';
