@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:api/handlers/responses/error.dart';
 import 'package:api/handlers/responses/success.dart';
-import 'package:api/repositories/report.dart';
+import 'package:api/interfaces/report.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 class ReportHandler {
-  final ReportRepository _m_reportRepository;
+  final ReportInterface _m_reportRepository;
 
-  ReportHandler(ReportRepository reportRepository)
+  ReportHandler(ReportInterface reportRepository)
     : _m_reportRepository = reportRepository;
 
   Router get router {
@@ -86,28 +86,58 @@ class ReportHandler {
   }
 
   Future<Response> _GetReports(Request request) async {
-    try {
-      final getReportsResponse = await this._m_reportRepository.GetReports();
+    final page = int.tryParse(request.url.queryParameters['page'] ?? '1');
 
-      final response = Response(
-        200,
-        body: SuccessResponse.Response(
-          message: "Reports found successfully",
-          data: getReportsResponse.map((aux) => aux.ReportResponse()).toList(),
+    final limit = int.tryParse(request.url.queryParameters['limit'] ?? '20');
+
+    if (page == null || page < 1 || limit == null || limit < 1 || limit > 100) {
+      return Response(
+        400,
+        body: ErrorResponse.Response(
+          message: "Invalid pagination parameters",
+          error: "Page must be at least 1 and limit must be between 1 and 100",
         ),
         headers: {'content-type': 'application/json'},
       );
+    }
 
-      return response;
+    try {
+      final totalItems = await this._m_reportRepository.GetReportsCount();
+
+      final getReportsResponse = await this._m_reportRepository.GetReports(
+        page: page,
+        limit: limit,
+      );
+
+      final totalPages = (totalItems + limit - 1) ~/ limit;
+
+      final responseBody = jsonDecode(
+        SuccessResponse.Response(
+          message: "Reports found successfully",
+          data: getReportsResponse.map((aux) => aux.ReportResponse()).toList(),
+        ),
+      ) as Map<String, dynamic>;
+
+      responseBody['pagination'] = {
+        "currentPage": page,
+        "perPage": limit,
+        "totalItems": totalItems,
+        "totalPages": totalPages,
+      };
+
+      return Response(
+        200,
+        body: jsonEncode(responseBody),
+        headers: {'content-type': 'application/json'},
+      );
     } catch (err) {
-      final response = Response.internalServerError(
+      return Response.internalServerError(
         body: ErrorResponse.Response(
           message: "Failed to get reports",
           error: err.toString(),
         ),
         headers: {'content-type': 'application/json'},
       );
-      return response;
     }
   }
 
