@@ -38,19 +38,22 @@ class UserModel {
        this.m_updatedAt = updatedAt,
        this.m_deletedAt = deletedAt;
 
-  UserModel.FromDatabase(Map<String, dynamic> row)
-    : this.m_id = row["id"] as String,
-      this.m_email = row["email"] as String,
-      this.m_phone = row["phone"] as String,
-      this.m_username = row["username"] as String,
-      this.m_name = row["name"] as String,
-      this.m_password = row["password"] as String,
-      this.m_role = RoleEnum.values.byName(
+  factory UserModel.FromDatabase(Map<String, dynamic> row) {
+    return UserModel(
+      id: row["id"] as String,
+      email: row["email"] as String,
+      phone: row["phone"] as String,
+      username: row["username"] as String,
+      name: row["name"] as String,
+      password: row["password"] as String,
+      role: RoleEnum.values.byName(
         utf8.decode((row["role"] as UndecodedBytes).bytes),
       ),
-      this.m_createdAt = row["created_at"] as DateTime,
-      this.m_updatedAt = row["updated_at"] as DateTime,
-      this.m_deletedAt = row["deleted_at"] as DateTime?;
+      createdAt: row["created_at"] as DateTime,
+      updatedAt: row["updated_at"] as DateTime,
+      deletedAt: row["deleted_at"] as DateTime?,
+    );
+  }
 
   Map<String, dynamic> UserResponse() {
     final response = {

@@ -58,28 +58,31 @@ class ReportModel {
        this.m_updatedAt = updatedAt,
        this.m_deletedAt = deletedAt;
 
-  ReportModel.FromDatabase(Map<String, dynamic> row)
-    : this.m_id = row['id'] as String,
-      this.m_userId = row['user_id'] as String,
-      this.m_reportCategoryId = row['report_category_id'] as String,
-      this.m_description = row['description'] as String?,
-      this.m_status = ReportEnum.values.byName(
+  factory ReportModel.FromDatabase(Map<String, dynamic> row) {
+    return ReportModel(
+      id: row['id'] as String,
+      userId: row['user_id'] as String,
+      reportCategoryId: row['report_category_id'] as String,
+      description: row['description'] as String?,
+      status: ReportEnum.values.byName(
         utf8.decode((row['status'] as UndecodedBytes).bytes),
       ),
-      this.m_street = row['street'] as String?,
-      this.m_number = row['number'] as String?,
-      this.m_complement = row['complement'] as String?,
-      this.m_neighborhood = row['neighborhood'] as String?,
-      this.m_city = row['city'] as String?,
-      this.m_state = row['state'] as String?,
-      this.m_postalCode = row['postal_code'] as String?,
-      this.m_coordinates = (
+      street: row['street'] as String?,
+      number: row['number'] as String?,
+      complement: row['complement'] as String?,
+      neighborhood: row['neighborhood'] as String?,
+      city: row['city'] as String?,
+      state: row['state'] as String?,
+      postalCode: row['postal_code'] as String?,
+      coordinates: (
         longitude: row['longitude'] as double,
         latitude: row['latitude'] as double,
       ),
-      this.m_createdAt = row['created_at'] as DateTime,
-      this.m_updatedAt = row['updated_at'] as DateTime,
-      this.m_deletedAt = row['deleted_at'] as DateTime?;
+      createdAt: row['created_at'] as DateTime,
+      updatedAt: row['updated_at'] as DateTime,
+      deletedAt: row['deleted_at'] as DateTime?,
+    );
+  }
 
   Map<String, dynamic> ReportResponse() {
     final response = {
