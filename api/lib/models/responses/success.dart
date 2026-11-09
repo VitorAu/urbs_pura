@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class SuccessResponse {
+class SuccessResponseModel {
   static Response<T>({required String message, required T data}) {
     final response = jsonEncode({
       "status": "SUCCESS",

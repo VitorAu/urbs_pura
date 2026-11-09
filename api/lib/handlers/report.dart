@@ -1,8 +1,9 @@
 import 'dart:convert';
 
-import 'package:api/handlers/responses/error.dart';
-import 'package:api/handlers/responses/success.dart';
 import 'package:api/interfaces/report.dart';
+import 'package:api/models/responses/error.dart';
+import 'package:api/models/responses/success.dart';
+import 'package:api/repositories/report.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -65,7 +66,7 @@ class ReportHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report created successfully",
           data: createReportResponse.ReportResponse(),
         ),
@@ -75,7 +76,7 @@ class ReportHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to create report",
           error: err.toString(),
         ),
@@ -104,15 +105,9 @@ class ReportHandler {
     try {
       final totalItems = await this._m_reportRepository.GetReportsCount();
 
-      final getReportsResponse = await this._m_reportRepository.GetReports(
-        page: page,
-        limit: limit,
-      );
-
-      final totalPages = (totalItems + limit - 1) ~/ limit;
-
-      final responseBody = jsonDecode(
-        SuccessResponse.Response(
+      final response = Response(
+        200,
+        body: SuccessResponseModel.Response(
           message: "Reports found successfully",
           data: getReportsResponse.map((aux) => aux.ReportResponse()).toList(),
         ),
@@ -131,8 +126,8 @@ class ReportHandler {
         headers: {'content-type': 'application/json'},
       );
     } catch (err) {
-      return Response.internalServerError(
-        body: ErrorResponse.Response(
+      final response = Response.internalServerError(
+        body: ErrorResponseModel.Response(
           message: "Failed to get reports",
           error: err.toString(),
         ),
@@ -149,7 +144,7 @@ class ReportHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report found successfully",
           data: getReportByIdResponse.ReportResponse(),
         ),
@@ -159,7 +154,7 @@ class ReportHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find report",
           error: err.toString(),
         ),
@@ -177,7 +172,7 @@ class ReportHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Reports found successfully",
           data: getReportsResponse.map((aux) => aux.ReportResponse()).toList(),
         ),
@@ -187,7 +182,7 @@ class ReportHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to get reports",
           error: err.toString(),
         ),
@@ -205,7 +200,7 @@ class ReportHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Reports found successfully",
           data: getReportsResponse.map((aux) => aux.ReportResponse()).toList(),
         ),
@@ -215,7 +210,7 @@ class ReportHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to get reports",
           error: err.toString(),
         ),
@@ -241,7 +236,7 @@ class ReportHandler {
       );
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report updated successfully",
           data: updateReportResponse.ReportResponse(),
         ),
@@ -251,7 +246,7 @@ class ReportHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to update report",
           error: err.toString(),
         ),
@@ -272,7 +267,7 @@ class ReportHandler {
       );
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report deleted successfully",
           data: updateReportResponse.ReportResponse(),
         ),
@@ -282,7 +277,7 @@ class ReportHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to delete report",
           error: err.toString(),
         ),

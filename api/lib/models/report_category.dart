@@ -20,13 +20,16 @@ class ReportCategoryModel {
        this.m_updatedAt = updatedAt,
        this.m_deletedAt = deletedAt;
 
-  ReportCategoryModel.FromDatabase(Map<String, dynamic> row)
-    : this.m_id = row["id"] as String,
-      this.m_title = row["title"] as String,
-      this.m_description = row["description"] as String?,
-      this.m_createdAt = row["created_at"] as DateTime,
-      this.m_updatedAt = row["updated_at"] as DateTime,
-      this.m_deletedAt = row["deleted_at"] as DateTime?;
+  factory ReportCategoryModel.FromDatabase(Map<String, dynamic> row) {
+    return ReportCategoryModel(
+      id: row["id"] as String,
+      title: row["title"] as String,
+      description: row["description"] as String?,
+      createdAt: row["created_at"] as DateTime,
+      updatedAt: row["updated_at"] as DateTime,
+      deletedAt: row["deleted_at"] as DateTime?,
+    );
+  }
 
   Map<String, dynamic> ReportCategoryResponse() {
     final response = {

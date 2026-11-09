@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:api/handlers/responses/error.dart';
+import 'package:api/models/responses/error.dart';
 import 'package:api/services/auth.dart';
 import 'package:shelf/shelf.dart';
 
@@ -14,7 +14,7 @@ class AuthMiddleware {
           final response = Response(
             401,
             body: jsonEncode(
-              ErrorResponse.Response(
+              ErrorResponseModel.Response(
                 message: "Authentication failed",
                 error: "Invalid authorization header",
               ),
@@ -31,7 +31,7 @@ class AuthMiddleware {
           final response = Response(
             401,
             body: jsonEncode(
-              ErrorResponse.Response(
+              ErrorResponseModel.Response(
                 message: "Authentication failed",
                 error: "Invalid or expired token",
               ),
