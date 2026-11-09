@@ -88,13 +88,11 @@ class ReportHandler {
 
   Future<Response> _GetReports(Request request) async {
     final page = int.tryParse(request.url.queryParameters['page'] ?? '1');
-
     final limit = int.tryParse(request.url.queryParameters['limit'] ?? '20');
-
     if (page == null || page < 1 || limit == null || limit < 1 || limit > 100) {
       return Response(
         400,
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Invalid pagination parameters",
           error: "Page must be at least 1 and limit must be between 1 and 100",
         ),
@@ -104,10 +102,11 @@ class ReportHandler {
 
     try {
       final totalItems = await this._m_reportRepository.GetReportsCount();
+      final getReportsResponse = await this._m_reportRepository.GetReports(page: page, limit: limit);
+      final totalPages = (totalItems + limit -1) ~/ limit;
 
-      final response = Response(
-        200,
-        body: SuccessResponseModel.Response(
+      final responseBody = jsonDecode(
+        SuccessResponseModel.Response(
           message: "Reports found successfully",
           data: getReportsResponse.map((aux) => aux.ReportResponse()).toList(),
         ),
@@ -133,6 +132,8 @@ class ReportHandler {
         ),
         headers: {'content-type': 'application/json'},
       );
+
+      return response;
     }
   }
 
