@@ -39,10 +39,10 @@ class UserModel {
       username: json["username"] as String,
       name: json["name"] as String,
       role: RoleEnum.values.byName(json["role"] as String),
-      createdAt: DateTime.parse(json["created_at"] as String),
-      updatedAt: DateTime.parse(json["updated_at"] as String),
-      deletedAt: json["deleted_at"] != null
-          ? DateTime.parse(json["deleted_at"] as String)
+      createdAt: DateTime.parse(json["createdAt"] as String),
+      updatedAt: DateTime.parse(json["updatedAt"] as String),
+      deletedAt: json["deletedAt"] != null
+          ? DateTime.parse(json["deletedAt"] as String)
           : null,
     );
   }

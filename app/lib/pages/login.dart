@@ -1,21 +1,91 @@
+import 'package:app/config/token.dart';
+import 'package:app/models/auth.dart';
+import 'package:app/models/response/error.dart';
+import 'package:app/models/response/success.dart';
+import 'package:app/pages/register.dart';
+import 'package:app/repositories/auth.dart';
 import 'package:flutter/material.dart';
 
-class AuthPage extends StatefulWidget {
-  const AuthPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<AuthPage> createState() => _AuthPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _isPasswordVisible = false;
+
+  final TextEditingController m_emailController = TextEditingController();
+  final TextEditingController m_passwordController = TextEditingController();
+
+  final AuthRepository m_authRepository = AuthRepository();
 
   final Color _primaryColor = const Color(0xFF09552f);
   final Color _darkTextColor = const Color(0xFF1B2921);
   final Color _bodyTextColor = const Color(0xFF526158);
   final Color _borderColor = const Color(0xFFDCE5DE);
   final Color _backgroundLight = const Color(0xFFF5F8F5);
+
+  Future<void> Login() async {
+    if (m_emailController.text.trim().isEmpty ||
+        m_passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha todos os campos.')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await m_authRepository.Login(
+        email: m_emailController.text.trim(),
+        password: m_passwordController.text,
+      );
+
+      if (!mounted) return;
+
+      if (response is SuccessResponseModel<AuthModel>) {
+        final auth = response.m_data;
+
+        if (auth == null) {
+          throw Exception('Resposta inválida do servidor.');
+        }
+
+        await Token.Save(
+          accessToken: auth.m_accessToken,
+          refreshToken: auth.m_refreshToken,
+        );
+
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login realizado com sucesso!')),
+        );
+      } else if (response is ErrorResponseModel) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(response.m_message)));
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Erro ao realizar login: $e')));
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    m_emailController.dispose();
+    m_passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +110,20 @@ class _AuthPageState extends State<AuthPage> {
                     bodyColor: this._bodyTextColor,
                     borderColor: this._borderColor,
                     isPasswordVisible: this._isPasswordVisible,
+                    emailController: m_emailController,
+                    passwordController: m_passwordController,
+                    onTogglePassword: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
                   ),
                   const SizedBox(height: 30),
-                  _LoginButton(buttonColor: this._darkTextColor),
+                  _LoginButton(
+                    buttonColor: this._darkTextColor,
+                    isLoading: this._isLoading,
+                    onPressed: this.Login,
+                  ),
                   const SizedBox(height: 10),
                   _CreateAccountButton(
                     primaryColor: this._primaryColor,
@@ -100,6 +181,9 @@ class _LoginFormFields extends StatelessWidget {
   final Color m_bodyColor;
   final Color m_borderColor;
   final bool m_isPasswordVisible;
+  final TextEditingController m_emailController;
+  final TextEditingController m_passwordController;
+  final VoidCallback m_onTogglePassword;
 
   Widget _Label(String text) {
     return Padding(
@@ -118,7 +202,8 @@ class _LoginFormFields extends StatelessWidget {
 
   Widget _InputField(
     IconData icon,
-    String hint, {
+    String hint,
+    TextEditingController controller, {
     bool isPassword = false,
     Widget? suffix,
   }) {
@@ -136,7 +221,11 @@ class _LoginFormFields extends StatelessWidget {
         ],
       ),
       child: TextField(
+        controller: controller,
         obscureText: isPassword && !this.m_isPasswordVisible,
+        keyboardType: isPassword
+            ? TextInputType.visiblePassword
+            : TextInputType.emailAddress,
         style: TextStyle(color: this.m_darkColor, fontWeight: FontWeight.w600),
         decoration: InputDecoration(
           hintText: hint,
@@ -159,11 +248,17 @@ class _LoginFormFields extends StatelessWidget {
     required Color bodyColor,
     required Color borderColor,
     required bool isPasswordVisible,
+    required TextEditingController emailController,
+    required TextEditingController passwordController,
+    required VoidCallback onTogglePassword,
   }) : m_primaryColor = primaryColor,
        m_darkColor = darkColor,
        m_bodyColor = bodyColor,
        m_borderColor = borderColor,
-       m_isPasswordVisible = isPasswordVisible;
+       m_isPasswordVisible = isPasswordVisible,
+       m_emailController = emailController,
+       m_passwordController = passwordController,
+       m_onTogglePassword = onTogglePassword;
 
   @override
   Widget build(BuildContext context) {
@@ -171,12 +266,17 @@ class _LoginFormFields extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         this._Label('Email'),
-        this._InputField(Icons.mail_outline_rounded, "Digite o seu email"),
+        this._InputField(
+          Icons.mail_outline_rounded,
+          "Digite o seu email",
+          m_emailController,
+        ),
         const SizedBox(height: 24),
         this._Label('Senha'),
         this._InputField(
           Icons.lock_open_rounded,
           "Digite a sua senha",
+          m_passwordController,
           isPassword: true,
           suffix: IconButton(
             onPressed: () {},
@@ -196,8 +296,16 @@ class _LoginFormFields extends StatelessWidget {
 
 class _LoginButton extends StatelessWidget {
   final Color m_buttonColor;
+  final bool m_isLoading;
+  final VoidCallback m_onPressed;
 
-  const _LoginButton({required buttonColor}) : m_buttonColor = buttonColor;
+  const _LoginButton({
+    required buttonColor,
+    required bool isLoading,
+    required VoidCallback onPressed,
+  }) : m_buttonColor = buttonColor,
+       m_isLoading = isLoading,
+       m_onPressed = onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -213,11 +321,20 @@ class _LoginButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        onPressed: () {},
-        child: const Text(
-          'Login',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-        ),
+        onPressed: this.m_isLoading ? null : this.m_onPressed,
+        child: m_isLoading
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : const Text(
+                'Login',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+              ),
       ),
     );
   }
@@ -240,7 +357,12 @@ class _CreateAccountButton extends StatelessWidget {
       children: [
         Text('Deseja se cadastrar?', style: TextStyle(color: this.m_bodyColor)),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RegisterPage()),
+            );
+          },
           child: Text(
             'Criar uma conta',
             style: TextStyle(

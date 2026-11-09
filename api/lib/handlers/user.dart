@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:api/handlers/responses/error.dart';
-import 'package:api/handlers/responses/success.dart';
+import 'package:api/models/responses/error.dart';
+import 'package:api/models/responses/success.dart';
 import 'package:api/repositories/user.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -34,7 +34,7 @@ class UserHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "User found successfully",
           data: getUserByIdResponse.UserResponse(),
         ),
@@ -44,7 +44,7 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find user",
           error: err.toString(),
         ),
@@ -63,7 +63,7 @@ class UserHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "User found successfully",
           data: getUserByIdResponse.UserResponse(),
         ),
@@ -73,7 +73,7 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find user",
           error: err.toString(),
         ),
@@ -91,7 +91,7 @@ class UserHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "User found successfully",
           data: getUserByEmailResponse.UserResponse(),
         ),
@@ -101,7 +101,7 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find user",
           error: err.toString(),
         ),
@@ -131,7 +131,7 @@ class UserHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "User updated successfully",
           data: updateUserResponse.UserResponse(),
         ),
@@ -141,7 +141,7 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to update user",
           error: err.toString(),
         ),
@@ -168,7 +168,7 @@ class UserHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "User password updated successfully",
           data: updateUserPasswordResponse.UserResponse(),
         ),
@@ -178,7 +178,7 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to update user password",
           error: err.toString(),
         ),
@@ -195,7 +195,7 @@ class UserHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "User deleted successfully",
           data: deleteResponse.UserResponse(),
         ),
@@ -205,7 +205,7 @@ class UserHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to delete user",
           error: err.toString(),
         ),

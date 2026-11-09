@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class ErrorResponse {
+class ErrorResponseModel {
   static String Response({required String message, required String error}) {
     final response = jsonEncode({
       "status": "ERROR",

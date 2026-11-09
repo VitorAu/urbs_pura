@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:api/handlers/responses/error.dart';
-import 'package:api/handlers/responses/success.dart';
+import 'package:api/models/responses/error.dart';
+import 'package:api/models/responses/success.dart';
 import 'package:api/repositories/report_category.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -38,7 +38,7 @@ class ReportCategoryHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report category created successfully",
           data: createReportCategoryResponse.ReportCategoryResponse(),
         ),
@@ -48,7 +48,7 @@ class ReportCategoryHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to create report category",
           error: err.toString(),
         ),
@@ -66,7 +66,7 @@ class ReportCategoryHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report categories found successfully",
           data: getReportCategoryResponse
               .map((aux) => aux.ReportCategoryResponse())
@@ -78,7 +78,7 @@ class ReportCategoryHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find report categories",
           error: err.toString(),
         ),
@@ -97,7 +97,7 @@ class ReportCategoryHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report category found successfully",
           data: getReportCategoryByIdResponse.ReportCategoryResponse(),
         ),
@@ -107,7 +107,7 @@ class ReportCategoryHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find report category",
           error: err.toString(),
         ),
@@ -126,7 +126,7 @@ class ReportCategoryHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report category found successfully",
           data: getReportCategoryByTitleResponse.ReportCategoryResponse(),
         ),
@@ -136,7 +136,7 @@ class ReportCategoryHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find report category",
           error: err.toString(),
         ),

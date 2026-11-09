@@ -1,7 +1,10 @@
-import 'package:app/pages/auth.dart';
+import 'package:app/pages/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: '.env.dev');
+
   runApp(const MyApp());
 }
 
@@ -14,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Inter', useMaterial3: true),
 
-      home: const AuthPage(),
+      home: const LoginPage(),
     );
   }
 }
