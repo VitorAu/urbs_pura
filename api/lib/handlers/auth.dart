@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:api/handlers/responses/error.dart';
-import 'package:api/handlers/responses/success.dart';
+import 'package:api/models/responses/error.dart';
+import 'package:api/models/responses/success.dart';
 import 'package:api/repositories/user.dart';
 import 'package:api/services/auth.dart';
 import 'package:shelf/shelf.dart';
@@ -46,7 +46,7 @@ class AuthHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "User created successfully",
           data: createUserResponse.UserResponse(),
         ),
@@ -56,7 +56,7 @@ class AuthHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to create user",
           error: err.toString(),
         ),
@@ -80,7 +80,7 @@ class AuthHandler {
           .VerifyUserPassword(id: getUserByEmailData.m_id, password: password);
       if (!verifyUserPasswordData) {
         final response = Response.internalServerError(
-          body: ErrorResponse.Response(
+          body: ErrorResponseModel.Response(
             message: "Failed to login into user",
             error: "Incorrect credentials",
           ),
@@ -99,7 +99,7 @@ class AuthHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "User created successfully",
           data: {
             'user': getUserByEmailData.UserResponse(),
@@ -113,7 +113,7 @@ class AuthHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to login into user",
           error: err.toString(),
         ),
@@ -133,7 +133,7 @@ class AuthHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.ResponseNoData(
+        body: SuccessResponseModel.ResponseNoData(
           message: "User loged out successfully",
         ),
         headers: {'content-type': 'application/json'},
@@ -142,7 +142,7 @@ class AuthHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to logout user",
           error: err.toString(),
         ),
@@ -167,7 +167,7 @@ class AuthHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Access token refreshed",
           data: {
             'user': getUserByRefreshTokenData.UserResponse(),
@@ -180,7 +180,7 @@ class AuthHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to refresh access token",
           error: err.toString(),
         ),

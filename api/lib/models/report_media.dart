@@ -32,17 +32,20 @@ class ReportMediaModel {
        m_updatedAt = updatedAt,
        m_deletedAt = deletedAt;
 
-  ReportMediaModel.FromDatabase(Map<String, dynamic> row)
-    : this.m_id = row["id"] as String,
-      this.m_reportId = row["report_id"] as String,
-      this.m_key = row["key"] as String,
-      this.m_sortOrder = row["sort_order"] as int,
-      this.m_mediaEnum = MediaEnum.values.byName(
+  factory ReportMediaModel.FromDatabase(Map<String, dynamic> row) {
+    return ReportMediaModel(
+      id: row["id"] as String,
+      reportId: row["report_id"] as String,
+      key: row["key"] as String,
+      sortOrder: row["sort_order"] as int,
+      mediaEnum: MediaEnum.values.byName(
         utf8.decode((row["media"] as UndecodedBytes).bytes),
       ),
-      this.m_createdAt = row["created_at"] as DateTime,
-      this.m_updatedAt = row["updated_at"] as DateTime,
-      this.m_deletedAt = row["deleted_at"] as DateTime?;
+      createdAt: row["created_at"] as DateTime,
+      updatedAt: row["updated_at"] as DateTime,
+      deletedAt: row["deleted_at"] as DateTime?,
+    );
+  }
 
   Map<String, dynamic> ReportMediaResponse() {
     final response = {

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:api/handlers/responses/error.dart';
-import 'package:api/handlers/responses/success.dart';
+import 'package:api/models/responses/error.dart';
+import 'package:api/models/responses/success.dart';
 import 'package:api/repositories/report_media.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -36,7 +36,7 @@ class ReportMediaHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report media created successfully",
           data: {
             ...createReportMediaResponse.model.ReportMediaResponse(),
@@ -49,7 +49,7 @@ class ReportMediaHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to create report media",
           error: err.toString(),
         ),
@@ -67,7 +67,7 @@ class ReportMediaHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report media found successfully",
           data: {
             ...getReportMediaByIdResponse.model.ReportMediaResponse(),
@@ -80,7 +80,7 @@ class ReportMediaHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find report media",
           error: err.toString(),
         ),
@@ -99,7 +99,7 @@ class ReportMediaHandler {
 
       final response = Response(
         200,
-        body: SuccessResponse.Response(
+        body: SuccessResponseModel.Response(
           message: "Report medias found successfully",
           data: getReportMediasByReportIdResponse.map((aux) {
             return {
@@ -114,7 +114,7 @@ class ReportMediaHandler {
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "Failed to find report medias",
           error: err.toString(),
         ),

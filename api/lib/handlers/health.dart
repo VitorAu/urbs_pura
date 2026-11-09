@@ -1,6 +1,6 @@
 import 'package:api/repositories/health.dart';
-import 'package:api/handlers/responses/error.dart';
-import 'package:api/handlers/responses/success.dart';
+import 'package:api/models/responses/error.dart';
+import 'package:api/models/responses/success.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -23,13 +23,13 @@ class HealthHandler {
     try {
       final response = Response(
         200,
-        body: SuccessResponse.ResponseNoData(message: "API is healthy"),
+        body: SuccessResponseModel.ResponseNoData(message: "API is healthy"),
         headers: {'content-type': 'application/json'},
       );
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "API is not healthy",
           error: err.toString(),
         ),
@@ -45,7 +45,7 @@ class HealthHandler {
 
       if (!data) {
         final response = Response.internalServerError(
-          body: ErrorResponse.Response(
+          body: ErrorResponseModel.Response(
             message: "DB is not healthy",
             error: "Database health check failed",
           ),
@@ -55,13 +55,13 @@ class HealthHandler {
       }
 
       final response = Response.ok(
-        SuccessResponse.ResponseNoData(message: "DB is healthy"),
+        SuccessResponseModel.ResponseNoData(message: "DB is healthy"),
         headers: {'content-type': 'application/json'},
       );
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ErrorResponse.Response(
+        body: ErrorResponseModel.Response(
           message: "DB is not healthy",
           error: err.toString(),
         ),
