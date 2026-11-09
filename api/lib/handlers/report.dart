@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:api/interfaces/report.dart';
 import 'package:api/models/responses/error.dart';
 import 'package:api/models/responses/success.dart';
 import 'package:api/repositories/report.dart';
@@ -8,9 +7,9 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 class ReportHandler {
-  final ReportInterface _m_reportRepository;
+  final ReportRepository _m_reportRepository;
 
-  ReportHandler(ReportInterface reportRepository)
+  ReportHandler(ReportRepository reportRepository)
     : _m_reportRepository = reportRepository;
 
   Router get router {
