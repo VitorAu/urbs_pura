@@ -1,4 +1,8 @@
-
+import 'package:app/models/report.dart';
+import 'package:app/models/response/success.dart';
+import 'package:app/repositories/report.dart';
+import 'package:app/repositories/report_category.dart';
+import 'package:app/widgets/report_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -12,8 +16,61 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  final ReportRepository _reportRepository = ReportRepository();
+  final ReportCategoryRepository _categoryRepository =
+      ReportCategoryRepository();
+
   bool selecionandoLocal = false;
+  bool _loading = true;
   LatLng? localSelecionado;
+
+  List<Report> _reports = [];
+  Map<String, String> _categories = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReports();
+  }
+
+  Future<void> _loadReports() async {
+    if (!mounted) return;
+    setState(() => _loading = true);
+
+    try {
+      final reportsResponse = await _reportRepository.GetReports();
+
+      if (reportsResponse is! SuccessResponseModel<List<Report>>) {
+        throw Exception('Não foi possível carregar as denúncias.');
+      }
+
+      final categoriesResponse = await _categoryRepository.getCategories();
+
+      final categories = <String, String>{};
+
+      if (categoriesResponse.m_data != null) {
+        for (final category in categoriesResponse.m_data!) {
+          categories[category.id] = category.title;
+        }
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        _reports = reportsResponse.m_data ?? [];
+        _categories = categories;
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.toString())));
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
+  }
 
   void iniciarDenuncia() {
     setState(() {
@@ -23,9 +80,7 @@ class _MapPageState extends State<MapPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text(
-          'Toque no mapa para selecionar o local da denúncia.',
-        ),
+        content: Text('Toque no mapa para selecionar o local da denúncia.'),
       ),
     );
   }
@@ -45,6 +100,18 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
+  Future<void> _openReport(Report report) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportDetails(
+          report: report,
+          categoryTitle: _categories[report.reportCategoryId] ?? 'Categoria',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,10 +123,7 @@ class _MapPageState extends State<MapPage> {
           if (!selecionandoLocal)
             TextButton.icon(
               onPressed: iniciarDenuncia,
-              icon: const Icon(
-                Icons.add_location_alt,
-                color: Colors.white,
-              ),
+              icon: const Icon(Icons.add_location_alt, color: Colors.white),
               label: const Text(
                 'Adicionar',
                 style: TextStyle(color: Colors.white),
@@ -83,14 +147,29 @@ class _MapPageState extends State<MapPage> {
             ),
             children: [
               TileLayer(
-                urlTemplate:
-                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'br.com.cidadelimpa.app',
               ),
 
-              if (localSelecionado != null)
-                MarkerLayer(
-                  markers: [
+              MarkerLayer(
+                markers: [
+                  ..._reports.map((report) {
+                    return Marker(
+                      point: LatLng(report.latitude, report.longitude),
+                      width: 50,
+                      height: 50,
+                      child: GestureDetector(
+                        onTap: () => _openReport(report),
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.green,
+                          size: 45,
+                        ),
+                      ),
+                    );
+                  }),
+
+                  if (localSelecionado != null)
                     Marker(
                       point: localSelecionado!,
                       width: 50,
@@ -101,14 +180,12 @@ class _MapPageState extends State<MapPage> {
                         size: 45,
                       ),
                     ),
-                  ],
-                ),
+                ],
+              ),
 
               const RichAttributionWidget(
                 attributions: [
-                  TextSourceAttribution(
-                    'OpenStreetMap contributors',
-                  ),
+                  TextSourceAttribution('OpenStreetMap contributors'),
                 ],
               ),
             ],
@@ -138,18 +215,25 @@ class _MapPageState extends State<MapPage> {
               left: 20,
               right: 20,
               child: ElevatedButton.icon(
-                onPressed: () {
-  final ponto = localSelecionado!;
+                onPressed: () async {
+                  final ponto = localSelecionado!;
 
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => ReportForm(
-        location: ponto,
-      ),
-    ),
-  );
-},
+                  final created = await Navigator.push<bool>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReportForm(location: ponto),
+                    ),
+                  );
+
+                  if (created == true && mounted) {
+                    setState(() {
+                      selecionandoLocal = false;
+                      localSelecionado = null;
+                    });
+
+                    await _loadReports();
+                  }
+                },
                 icon: const Icon(Icons.check),
                 label: const Text('Confirmar localização'),
                 style: ElevatedButton.styleFrom(

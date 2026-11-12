@@ -17,6 +17,7 @@ class ReportHandler {
 
     router.post('/', this._CreateReport);
     router.get('/', this._GetReports);
+    router.get('/pag', this._GetReportsPag);
     router.get('/<id>', this._GetReportById);
     router.get('/user/<user_id>', this._GetReportsByUserId);
     router.get(
@@ -86,6 +87,32 @@ class ReportHandler {
   }
 
   Future<Response> _GetReports(Request request) async {
+    try {
+      final getReportsResponse = await this._m_reportRepository.GetReports();
+
+      final response = Response(
+        200,
+        body: SuccessResponseModel.Response(
+          message: "Reports found successfully",
+          data: getReportsResponse.map((aux) => aux.ReportResponse()).toList(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+
+      return response;
+    } catch (err) {
+      final response = Response.internalServerError(
+        body: ErrorResponseModel.Response(
+          message: "Failed to get reports",
+          error: err.toString(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+      return response;
+    }
+  }
+
+  Future<Response> _GetReportsPag(Request request) async {
     final page = int.tryParse(request.url.queryParameters['page'] ?? '1');
     final limit = int.tryParse(request.url.queryParameters['limit'] ?? '20');
     if (page == null || page < 1 || limit == null || limit < 1 || limit > 100) {
@@ -101,7 +128,7 @@ class ReportHandler {
 
     try {
       final totalItems = await this._m_reportRepository.GetReportsCount();
-      final getReportsResponse = await this._m_reportRepository.GetReports(page: page, limit: limit);
+      final getReportsResponse = await this._m_reportRepository.GetReportsPag(page: page, limit: limit);
       final totalPages = (totalItems + limit -1) ~/ limit;
 
       final responseBody = jsonDecode(

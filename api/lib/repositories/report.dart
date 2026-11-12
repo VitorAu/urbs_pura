@@ -80,7 +80,26 @@ class ReportRepository extends ReportInterface {
   }
 
   @override
-  Future<List<ReportModel>> GetReports({
+  Future<List<ReportModel>> GetReports() async {
+    final connection = await this._m_connection;
+    final data = await connection.execute(
+      Sql.named('''
+        SELECT *,
+        ST_X(coordinates::geometry) AS longitude,
+        ST_Y(coordinates::geometry) AS latitude
+        FROM reports
+        WHERE deleted_at IS NULL
+      '''),
+    );
+
+    final response = data
+        .map((aux) => ReportModel.FromDatabase(aux.toColumnMap()))
+        .toList();
+    return response;
+  }
+
+  @override
+  Future<List<ReportModel>> GetReportsPag({
     required int page,
     required int limit,
   }) async {

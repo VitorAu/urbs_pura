@@ -14,7 +14,8 @@ abstract class ReportInterface {
     String? postalCode,
     required CoordinatesType coordinates,
   });
-  Future<List<ReportModel>> GetReports({required int page, required int limit});
+  Future<List<ReportModel>> GetReports();
+  Future<List<ReportModel>> GetReportsPag({required int page, required int limit});
   Future<int> GetReportsCount();
   Future<ReportModel> GetReportById({required String id});
   Future<List<ReportModel>> GetReportsByUserId({required String userId});

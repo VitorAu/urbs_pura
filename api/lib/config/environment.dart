@@ -15,6 +15,7 @@ class Environment {
   static final _m_serverJwtRefreshTokenExpiration =
       Platform.environment["SERVER_JWT_REFRESH_TOKEN_EXPIRATION"];
   static final _m_s3_endpoint = Platform.environment["S3_ENDPOINT"];
+  static final _m_s3_public_endpoint = Platform.environment["S3_PUBLIC_ENDPOINT"];
   static final _m_s3_access_key = Platform.environment["S3_ACCESS_KEY"];
   static final _m_s3_secret_key = Platform.environment["S3_SECRET_KEY"];
   static final _m_s3_bucket = Platform.environment["S3_BUCKET"];
@@ -34,6 +35,7 @@ class Environment {
   static String get ServerJwtRefreshTokenExpiration =>
       _m_serverJwtRefreshTokenExpiration ?? "";
   static String get S3Endpoint => _m_s3_endpoint ?? "";
+  static String get S3PublicEndpoint => _m_s3_public_endpoint ?? "";
   static String get S3AccessKey => _m_s3_access_key ?? "";
   static String get S3SecretKey => _m_s3_secret_key ?? "";
   static String get S3Bucket => _m_s3_bucket ?? "";

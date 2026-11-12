@@ -1,5 +1,5 @@
-
 import 'package:app/config/api.dart';
+import 'package:app/models/report.dart';
 import 'package:app/models/response/error.dart';
 import 'package:app/models/response/success.dart';
 
@@ -18,13 +18,9 @@ class ReportRepository {
       body: {
         'report_category_id': categoryId,
         'description': description,
-        'coordinates': {
-          'latitude': latitude,
-          'longitude': longitude,
-        },
+        'coordinates': {'latitude': latitude, 'longitude': longitude},
       },
-      fromJson: (data) =>
-          Map<String, dynamic>.from(data as Map),
+      fromJson: (data) => Map<String, dynamic>.from(data as Map),
     );
 
     if (response is SuccessResponseModel<Map<String, dynamic>> ||
@@ -33,5 +29,24 @@ class ReportRepository {
     }
 
     throw Exception('Resposta inesperada ao criar denúncia.');
+  }
+
+  Future<dynamic> GetReports() async {
+    final response = await _api.Request<List<Report>>(
+      method: 'GET',
+      endpoint: '/report/',
+      fromJson: (data) => (data as List)
+          .map(
+            (item) => Report.fromJson(Map<String, dynamic>.from(item as Map)),
+          )
+          .toList(),
+    );
+
+    if (response is SuccessResponseModel<List<Report>> ||
+        response is ErrorResponseModel) {
+      return response;
+    }
+
+    throw Exception('Resposta inesperada ao buscar denúncias.');
   }
 }

@@ -13,11 +13,11 @@ services:
             ]
           },
           {
-            \"name\": \"some_admin_user\",
+            \"name\": \"admin\",
             \"credentials\": [
               {
-                \"accessKey\": \"some_access_key1\",
-                \"secretKey\": \"some_secret_key1\"
+                \"accessKey\": \"${S3_ACCESS_KEY}\",
+                \"secretKey\": \"${S3_SECRET_KEY}\"
               }
             ],
             \"actions\": [
@@ -68,6 +68,7 @@ services:
       SERVER_JWT_ACCESS_TOKEN_EXPIRATION: ${SERVER_JWT_ACCESS_TOKEN_EXPIRATION}
       SERVER_JWT_REFRESH_TOKEN_EXPIRATION: ${SERVER_JWT_REFRESH_TOKEN_EXPIRATION}
       S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT}
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_BUCKET: ${S3_BUCKET}

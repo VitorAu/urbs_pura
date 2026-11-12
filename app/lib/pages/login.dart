@@ -290,7 +290,7 @@ class _LoginFormFields extends StatelessWidget {
           m_passwordController,
           isPassword: true,
           suffix: IconButton(
-            onPressed: () {},
+            onPressed: m_onTogglePassword,
             icon: Icon(
               this.m_isPasswordVisible
                   ? Icons.visibility_rounded
