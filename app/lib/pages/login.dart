@@ -5,6 +5,7 @@ import 'package:app/models/response/success.dart';
 import 'package:app/pages/register.dart';
 import 'package:app/repositories/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:app/pages/map.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -61,10 +62,18 @@ class _LoginPageState extends State<LoginPage> {
 
         if (!mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login realizado com sucesso!')),
-        );
-      } else if (response is ErrorResponseModel) {
+ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(
+    content: Text('Login realizado com sucesso!'),
+  ),
+);
+
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const MapPage(),
+  ),
+);      } else if (response is ErrorResponseModel) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(response.m_message)));
       }
@@ -79,6 +88,8 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
+
 
   @override
   void dispose() {
