@@ -1,0 +1,217 @@
+import 'dart:convert';
+
+import 'package:api/models/responses/error.dart';
+import 'package:api/models/responses/success.dart';
+import 'package:api/repositories/user.dart';
+import 'package:shelf/shelf.dart';
+import 'package:shelf_router/shelf_router.dart';
+
+class UserHandler {
+  final UserRepository _m_userRepository;
+
+  UserHandler(UserRepository userRepository)
+    : _m_userRepository = userRepository;
+
+  Router get router {
+    final router = Router();
+
+    router.get('/', this._GetAuthenticatedUser);
+    router.get('/id/<id>', this._GetUserById);
+    router.get('/email/<email>', this._GetUserByEmail);
+    router.patch('/', this._UpdateUser);
+    router.patch('/password', this._UpdateUserPassword);
+    router.delete('/', this._Delete);
+
+    return router;
+  }
+
+  Future<Response> _GetAuthenticatedUser(Request request) async {
+    try {
+      final id = request.context['userId'] as String;
+      final getUserByIdResponse = await this._m_userRepository.GetUserById(
+        id: id,
+      );
+
+      final response = Response(
+        200,
+        body: SuccessResponseModel.Response(
+          message: "User found successfully",
+          data: getUserByIdResponse.UserResponse(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+
+      return response;
+    } catch (err) {
+      final response = Response.internalServerError(
+        body: ErrorResponseModel.Response(
+          message: "Failed to find user",
+          error: err.toString(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+      return response;
+    }
+  }
+
+  Future<Response> _GetUserById(Request request) async {
+    try {
+      final id = request.params['id']!;
+      final getUserByIdResponse = await this._m_userRepository.GetUserById(
+        id: id,
+      );
+
+      final response = Response(
+        200,
+        body: SuccessResponseModel.Response(
+          message: "User found successfully",
+          data: getUserByIdResponse.UserResponse(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+
+      return response;
+    } catch (err) {
+      final response = Response.internalServerError(
+        body: ErrorResponseModel.Response(
+          message: "Failed to find user",
+          error: err.toString(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+      return response;
+    }
+  }
+
+  Future<Response> _GetUserByEmail(Request request) async {
+    try {
+      final email = request.params['email']!;
+      final getUserByEmailResponse = await this._m_userRepository
+          .GetUserByEmail(email: email);
+
+      final response = Response(
+        200,
+        body: SuccessResponseModel.Response(
+          message: "User found successfully",
+          data: getUserByEmailResponse.UserResponse(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+
+      return response;
+    } catch (err) {
+      final response = Response.internalServerError(
+        body: ErrorResponseModel.Response(
+          message: "Failed to find user",
+          error: err.toString(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+      return response;
+    }
+  }
+
+  Future<Response> _UpdateUser(Request request) async {
+    try {
+      final data =
+          jsonDecode(await request.readAsString()) as Map<String, dynamic>;
+
+      final id = request.context['userId'] as String;
+      final email = data['email'] as String?;
+      final phone = data['phone'] as String?;
+      final username = data['username'] as String?;
+      final name = data['name'] as String?;
+      final updateUserResponse = await this._m_userRepository.UpdateUser(
+        id: id,
+        email: email,
+        phone: phone,
+        username: username,
+        name: name,
+      );
+
+      final response = Response(
+        200,
+        body: SuccessResponseModel.Response(
+          message: "User updated successfully",
+          data: updateUserResponse.UserResponse(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+
+      return response;
+    } catch (err) {
+      final response = Response.internalServerError(
+        body: ErrorResponseModel.Response(
+          message: "Failed to update user",
+          error: err.toString(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+      return response;
+    }
+  }
+
+  Future<Response> _UpdateUserPassword(Request request) async {
+    try {
+      final data =
+          jsonDecode(await request.readAsString()) as Map<String, dynamic>;
+
+      final id = request.context['userId'] as String;
+      final password = data['password'] as String;
+      final newPassword = data['newPassword'] as String;
+      final updateUserPasswordResponse = await this._m_userRepository
+          .UpdateUserPassword(
+            id: id,
+            password: password,
+            newPassword: newPassword,
+          );
+
+      final response = Response(
+        200,
+        body: SuccessResponseModel.Response(
+          message: "User password updated successfully",
+          data: updateUserPasswordResponse.UserResponse(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+
+      return response;
+    } catch (err) {
+      final response = Response.internalServerError(
+        body: ErrorResponseModel.Response(
+          message: "Failed to update user password",
+          error: err.toString(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+      return response;
+    }
+  }
+
+  Future<Response> _Delete(Request request) async {
+    try {
+      final id = request.context['userId'] as String;
+      final deleteResponse = await this._m_userRepository.DeleteUser(id: id);
+
+      final response = Response(
+        200,
+        body: SuccessResponseModel.Response(
+          message: "User deleted successfully",
+          data: deleteResponse.UserResponse(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+
+      return response;
+    } catch (err) {
+      final response = Response.internalServerError(
+        body: ErrorResponseModel.Response(
+          message: "Failed to delete user",
+          error: err.toString(),
+        ),
+        headers: {'content-type': 'application/json'},
+      );
+      return response;
+    }
+  }
+}

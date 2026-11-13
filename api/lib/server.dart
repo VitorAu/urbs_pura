@@ -1,7 +1,20 @@
 import 'dart:io';
 
 import 'package:api/config/environment.dart';
+import 'package:api/handlers/auth.dart';
 import 'package:api/handlers/health.dart';
+import 'package:api/handlers/report.dart';
+import 'package:api/handlers/report_category.dart';
+import 'package:api/handlers/report_media.dart';
+import 'package:api/handlers/user.dart';
+import 'package:api/middleware/auth.dart';
+import 'package:api/repositories/health.dart';
+import 'package:api/repositories/report.dart';
+import 'package:api/repositories/report_category.dart';
+import 'package:api/repositories/report_media.dart';
+import 'package:api/repositories/user.dart';
+import 'package:api/services/auth.dart';
+import 'package:api/services/s3.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
@@ -11,12 +24,63 @@ class Server {
   final Connection _m_connection;
   final Router _m_router = Router();
 
-  Server(Connection connection): _m_connection = connection;
+  Server(Connection connection) : _m_connection = connection;
 
   Future<void> Start() async {
     final ip = InternetAddress.anyIPv4;
 
-    this._m_router.mount("/api/v1/health", HealthHandler(this._m_connection).router);
+    final authService = AuthService();
+    final s3Service = S3Service();
+
+    final healthRepository = HealthRepository(Future.value(this._m_connection));
+    final userRepository = UserRepository(
+      Future.value(this._m_connection),
+      authService,
+    );
+    final reportCategoryRepository = ReportCategoryRepository(
+      Future.value(this._m_connection),
+    );
+    final reportRepository = ReportRepository(Future.value(this._m_connection));
+    final reportMediaRepository = ReportMediaRepository(
+      Future.value(this._m_connection),
+      s3Service,
+    );
+
+    this._m_router.mount(
+      "/api/v1/health",
+      HealthHandler(healthRepository).router,
+    );
+    this._m_router.mount(
+      "/api/v1/auth",
+      AuthHandler(userRepository, authService).router,
+    );
+    this._m_router.mount(
+      '/api/v1/user',
+      Pipeline()
+          .addMiddleware(AuthMiddleware.Auth(authService))
+          .addHandler(UserHandler(userRepository).router.call),
+    );
+    this._m_router.mount(
+      '/api/v1/report_category',
+      Pipeline()
+          .addMiddleware(AuthMiddleware.Auth(authService))
+          .addHandler(
+            ReportCategoryHandler(reportCategoryRepository).router.call,
+          ),
+    );
+    this._m_router.mount(
+      '/api/v1/report',
+      Pipeline()
+          .addMiddleware(AuthMiddleware.Auth(authService))
+          .addHandler(ReportHandler(reportRepository).router.call),
+    );
+    this._m_router.mount(
+      '/api/v1/report_media',
+      Pipeline()
+          .addMiddleware(AuthMiddleware.Auth(authService))
+          .addHandler(ReportMediaHandler(reportMediaRepository).router.call),
+    );
+
     final handler = Pipeline().addHandler(this._m_router.call);
 
     final port = int.parse(Environment.ServerPort);

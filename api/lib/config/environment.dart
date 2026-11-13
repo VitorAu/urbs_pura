@@ -10,6 +10,16 @@ class Environment {
   static final _m_databaseUrl = Platform.environment["DATABASE_URL"];
   static final _m_serverPort = Platform.environment["SERVER_PORT"];
   static final _m_serverJwtSecret = Platform.environment["SERVER_JWT_SECRET"];
+  static final _m_serverJwtAccessTokenExpiration =
+      Platform.environment["SERVER_JWT_ACCESS_TOKEN_EXPIRATION"];
+  static final _m_serverJwtRefreshTokenExpiration =
+      Platform.environment["SERVER_JWT_REFRESH_TOKEN_EXPIRATION"];
+  static final _m_s3_endpoint = Platform.environment["S3_ENDPOINT"];
+  static final _m_s3_public_endpoint = Platform.environment["S3_PUBLIC_ENDPOINT"];
+  static final _m_s3_access_key = Platform.environment["S3_ACCESS_KEY"];
+  static final _m_s3_secret_key = Platform.environment["S3_SECRET_KEY"];
+  static final _m_s3_bucket = Platform.environment["S3_BUCKET"];
+  static final _m_s3_region = Platform.environment["S3_REGION"];
 
   static String get DartEnv => _m_dartEnv ?? "development";
   static String get DatabasePort => _m_databasePort ?? "5432";
@@ -20,4 +30,14 @@ class Environment {
   static String get DatabaseUrl => _m_databaseUrl ?? "";
   static String get ServerPort => _m_serverPort ?? "8080";
   static String get ServerJwtSecret => _m_serverJwtSecret ?? "";
+  static String get ServerJwtAccessTokenExpiration =>
+      _m_serverJwtAccessTokenExpiration ?? "";
+  static String get ServerJwtRefreshTokenExpiration =>
+      _m_serverJwtRefreshTokenExpiration ?? "";
+  static String get S3Endpoint => _m_s3_endpoint ?? "";
+  static String get S3PublicEndpoint => _m_s3_public_endpoint ?? "";
+  static String get S3AccessKey => _m_s3_access_key ?? "";
+  static String get S3SecretKey => _m_s3_secret_key ?? "";
+  static String get S3Bucket => _m_s3_bucket ?? "";
+  static String get S3Region => _m_s3_region ?? "";
 }

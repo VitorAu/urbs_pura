@@ -1,33 +1,39 @@
-import 'package:api/models/response.dart';
-import 'package:postgres/postgres.dart';
+import 'package:api/repositories/health.dart';
+import 'package:api/models/responses/error.dart';
+import 'package:api/models/responses/success.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 class HealthHandler {
-  Connection _m_connection;
+  final HealthRepository _m_healthRepository;
 
-  HealthHandler(Connection connection): _m_connection = connection;
+  HealthHandler(HealthRepository healthRepository)
+    : _m_healthRepository = healthRepository;
 
   Router get router {
     final router = Router();
-    router.get('/api', _GetApiHealth);
-    router.get('/db', _GetDatabaseHealth);
+
+    router.get('/api', this._GetApiHealth);
+    router.get('/db', this._GetDatabaseHealth);
+
     return router;
   }
 
   Future<Response> _GetApiHealth(Request request) async {
     try {
-      final response = Response.ok(
-        ResponseModel.SuccessNoDataResponse(message: "API is healthy"),
+      final response = Response(
+        200,
+        body: SuccessResponseModel.ResponseNoData(message: "API is healthy"),
         headers: {'content-type': 'application/json'},
       );
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ResponseModel.ErrorResponse(
+        body: ErrorResponseModel.Response(
           message: "API is not healthy",
           error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }
@@ -35,19 +41,31 @@ class HealthHandler {
 
   Future<Response> _GetDatabaseHealth(Request request) async {
     try {
-      await this._m_connection.execute('SELECT 1');
+      final data = await this._m_healthRepository.GetDatabaseHealth();
+
+      if (!data) {
+        final response = Response.internalServerError(
+          body: ErrorResponseModel.Response(
+            message: "DB is not healthy",
+            error: "Database health check failed",
+          ),
+          headers: {'content-type': 'application/json'},
+        );
+        return response;
+      }
 
       final response = Response.ok(
-        ResponseModel.SuccessNoDataResponse(message: "DB is healthy"),
+        SuccessResponseModel.ResponseNoData(message: "DB is healthy"),
         headers: {'content-type': 'application/json'},
       );
       return response;
     } catch (err) {
       final response = Response.internalServerError(
-        body: ResponseModel.ErrorResponse(
+        body: ErrorResponseModel.Response(
           message: "DB is not healthy",
           error: err.toString(),
         ),
+        headers: {'content-type': 'application/json'},
       );
       return response;
     }

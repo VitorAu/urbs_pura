@@ -70,7 +70,7 @@ class Database {
       for (final file in files) {
         final fileName = file.path.split("/").last;
         final fileSql = await file.readAsString();
-        final fileHash = md5.convert(utf8.encode(fileSql));
+        final fileHash = md5.convert(utf8.encode(fileSql)).toString();
         final fileQueries = fileSql
             .split(";")
             .map((aux) => aux.trim())
