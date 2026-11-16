@@ -123,7 +123,7 @@ S3_BUCKET=
 S3_REGION=
 ```
 
-### Aplicativo Mobile (`app/.env`)
+### Aplicativo Mobile (`app/.env.dev`)
 
 Configure as variáveis utilizadas pelo aplicativo, como o endereço da API:
 
